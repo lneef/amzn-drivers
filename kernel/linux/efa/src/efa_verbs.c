@@ -1735,7 +1735,8 @@ int efa_destroy_cq(struct ib_cq *ibcq)
 	if (cq->cpu_addr)
 		efa_free_mapped(dev, cq->cpu_addr, cq->dma_addr, cq->size, DMA_FROM_DEVICE);
 #ifndef HAVE_IB_CQ_UMEM
-	ib_umem_release(cq->umem);
+	if (cq->umem)
+		ib_umem_release(cq->umem);
 #endif
 #ifdef HAVE_EFA_KVERBS
 	kfree(cq->sub_cq_arr);
@@ -2100,7 +2101,8 @@ err_free_mapped:
 				DMA_FROM_DEVICE);
 err_release_umem:
 #if !defined(HAVE_CREATE_CQ_UMEM) && !defined(HAVE_IB_CQ_UMEM)
-	ib_umem_release(cq->umem);
+	if (cq->umem)
+		ib_umem_release(cq->umem);
 #endif
 err_out:
 	atomic64_inc(&dev->stats.create_cq_err);
