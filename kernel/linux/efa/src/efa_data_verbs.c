@@ -67,9 +67,9 @@ static inline struct efa_ah *to_eah(struct ib_ah *ibah)
 	return container_of(ibah, struct efa_ah, ibah);
 }
 
-static u32 efa_sge_total_bytes(const struct ib_sge *sg_list, int num_sge)
+static u64 efa_sge_total_bytes(const struct ib_sge *sg_list, int num_sge)
 {
-	u32 bytes = 0;
+	u64 bytes = 0;
 	int i;
 
 	for (i = 0; i < num_sge; i++)
