@@ -11,7 +11,6 @@
 #include <rdma/uverbs_named_ioctl.h>
 #endif
 #include "efa.h"
-#include "efa-abi.h"
 
 #ifdef HAVE_IB_DEVICE_DRIVER_DEF
 #ifndef HAVE_IB_COMP_CNTR
