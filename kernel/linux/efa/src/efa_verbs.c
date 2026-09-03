@@ -2775,6 +2775,38 @@ err_out:
 }
 #endif
 
+#ifdef HAVE_EFA_P2P
+static struct efa_p2pmem *efa_p2p_get_and_validate(struct efa_dev *dev, struct efa_mr *mr,
+						   u64 start, u64 length, u64 virt_addr)
+{
+	struct efa_p2pmem *p2pmem;
+	unsigned int pg_sz;
+
+	p2pmem = efa_p2p_get(dev, mr, start, length);
+	if (!p2pmem)
+		return NULL;
+
+	pg_sz = efa_p2p_get_page_size(dev, p2pmem);
+	if (!pg_sz) {
+		ibdev_dbg(&dev->ibdev, "Failed to get buffer page size for P2P memory\n");
+		goto err_put;
+	}
+
+	if (start % pg_sz != virt_addr % pg_sz) {
+		ibdev_dbg(&dev->ibdev,
+			  "P2P address[0x%llx] and IOVA[0x%llx] must have the same offset within page size[%u]\n",
+			  start, virt_addr, pg_sz);
+
+		goto err_put;
+	}
+
+	return p2pmem;
+err_put:
+	efa_p2p_put(p2pmem->ticket, false);
+	return NULL;
+}
+#endif
+
 struct ib_mr *efa_reg_mr(struct ib_pd *ibpd, u64 start, u64 length,
 			 u64 virt_addr, int access_flags,
 #ifdef HAVE_REG_USER_MR_DMAH
@@ -2813,7 +2845,7 @@ struct ib_mr *efa_reg_mr(struct ib_pd *ibpd, u64 start, u64 length,
 #endif
 	if (IS_ERR(mr->umem)) {
 #ifdef HAVE_EFA_P2P
-		mr->p2pmem = efa_p2p_get(dev, mr, start, length);
+		mr->p2pmem = efa_p2p_get_and_validate(dev, mr, start, length, virt_addr);
 		if (mr->p2pmem) {
 			/* Avoid referencing an error-pointer later on */
 			mr->umem = NULL;
