@@ -113,6 +113,13 @@ install -m 644 neuron_p2p.h		%{buildroot}%{install_path}/src
 /etc/modprobe.d/efa.conf
 
 %changelog
+* Thu Sep 03 2026 Michael Margolin <mrgolin@amazon.com> - 3.3.1
+- Add support for 128-byte admin commands
+- Fix crash on CQ umem release on some old kernels
+- Fix possible overflow when checking inline data size
+- Limit number of conftests running in parallel to avoid OOM on low memory setups
+- Prevent use of wrongly aligned VA in P2P memory registration
+
 * Tue Jul 28 2026 Michael Margolin <mrgolin@amazon.com> - 3.3.0
 - Add Completion Counters support
 - Add support for creating QP and SQ that use 64-bit work request ids

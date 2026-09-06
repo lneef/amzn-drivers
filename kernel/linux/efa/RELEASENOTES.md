@@ -3,6 +3,13 @@
 ## Supported Kernel Versions and Distributions
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-amis
 
+## r3.3.1 release notes
+* Add support for 128-byte admin commands
+* Fix crash on CQ umem release on some old kernels
+* Fix possible overflow when checking inline data size
+* Limit number of conftests running in parallel to avoid OOM on low memory setups
+* Prevent use of wrongly aligned VA in P2P memory registration
+
 ## r3.3.0 release notes
 * Add Completion Counters support
 * Add support for creating QP and SQ that use 64-bit work request ids
